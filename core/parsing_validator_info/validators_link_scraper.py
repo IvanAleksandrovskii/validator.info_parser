@@ -1,13 +1,14 @@
 from icecream import ic
 
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as ec
 
 import pandas as pd
 
 from core.parsing_validator_info import ValidatorInfoScraper
+from core import logger
 
 
 class ValidatorExternalLinksScraper(ValidatorInfoScraper):
@@ -30,8 +31,8 @@ class ValidatorExternalLinksScraper(ValidatorInfoScraper):
         for index, row in df.iterrows():
             validator_name = row['validator_name']
             validator_link = row['link']
-            ic(f"Processing validator: {validator_name}")
-            ic(f"Validator link: {validator_link}")
+            logger.debug(f"Processing validator: {validator_name}")
+            logger.debug(f"Validator link: {validator_link}")
 
             try:
                 self.driver.get(validator_link)
@@ -44,18 +45,17 @@ class ValidatorExternalLinksScraper(ValidatorInfoScraper):
                 try:
                     link_element = self.driver.find_element(By.CLASS_NAME, "el-BlockchainAgentExternalLink")
                     external_link = link_element.get_attribute("href")
-                    ic(f"External link found: {external_link}")
+                    logger.debug(f"External link found: {external_link}")
 
                 except:
-                    ic(f"el-BlockchainAgentExternalLink not found, searching all <a> elements...")
                     external_link = ''
-                    ic(f"No external link found for validator: {validator_name}")
+                    logger.debug(f"No external link found for validator: {validator_name}")
 
                 self.data.append(external_link)
 
             except TimeoutException:
-                ic(f"Timeout waiting for page to load for validator: {validator_name}")
+                logger.exception(f"Timeout waiting for page to load for validator: {validator_name}")
             except Exception as e:
-                ic(f"Error processing validator {validator_name}: {str(e)}")
+                logger.exception(f"Error processing validator {validator_name}: {str(e)}")
 
         self.save_to_csv()

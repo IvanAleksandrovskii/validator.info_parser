@@ -1,14 +1,16 @@
+from icecream import ic
+import httpx
 import os
 import re
-import httpx
-import pandas as pd
-from icecream import ic
 
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.common.by import By
+
+import pandas as pd
 
 from core.parsing_validator_info import ValidatorInfoScraper
+from core import logger
 
 
 class ValidatorLinkAndImageScraper(ValidatorInfoScraper):
@@ -20,9 +22,9 @@ class ValidatorLinkAndImageScraper(ValidatorInfoScraper):
         ic("Starting to scrape validator links and images...")
 
         for url in self.urls:
-            ic(f"Processing URL: {url}")
+            logger.debug(f"Processing URL: {url}")
             chain_name = url.split('/')[-1]
-            ic(f"Chain name: {chain_name}")
+            logger.debug(f"Chain name: {chain_name}")
 
             self.data[chain_name] = []
 
@@ -36,17 +38,17 @@ class ValidatorLinkAndImageScraper(ValidatorInfoScraper):
                 ic(f"Found {len(rows)} validators for {chain_name}")
 
                 for i, row in enumerate(rows):
-                    ic(f"Processing validator {i + 1} of {len(rows)}")
+                    logger.debug(f"Processing validator {i + 1} of {len(rows)}")
 
                     try:
                         validator_link = row.find_element(By.TAG_NAME, "a").get_attribute("href")
-                        ic(f"Validator page link: {validator_link}")
+                        logger.debug(f"Validator page link: {validator_link}")
 
                         validator_name = row.find_element(By.CLASS_NAME, "el-NameText").text.strip()
-                        ic(f"Validator name: {validator_name}")
+                        logger.debug(f"Validator name: {validator_name}")
 
                         img_src = row.find_element(By.TAG_NAME, "img").get_attribute("src")
-                        ic(f"Image source: {img_src}")
+                        logger.debug(f"Image source: {img_src}")
 
                         self.data[chain_name].append({
                             "validator_name": validator_name,
@@ -68,20 +70,20 @@ class ValidatorLinkAndImageScraper(ValidatorInfoScraper):
         ic("Starting to save images and create CSV files...")
 
         for chain_name, validators in self.data.items():
-            ic(f"Processing chain: {chain_name}")
+            logger.debug(f"Processing chain: {chain_name}")
             os.makedirs(chain_name, exist_ok=True)
 
             for item in validators:
                 img_filename = self.get_valid_filename(item['validator_name']) + ".png"
                 img_path = os.path.join(chain_name, img_filename)
 
-                ic(f"Downloading image for {item['validator_name']}")
+                logger.debug(f"Downloading image for {item['validator_name']}")
                 response = httpx.get(item['img_src'])
                 with open(img_path, 'wb') as f:
                     f.write(response.content)
 
                 item['img_filename'] = img_filename
-                ic(f"Saved image: {img_filename}")
+                logger.debug(f"Saved image: {img_filename}")
 
             df = pd.DataFrame(validators)
             csv_path = os.path.join(chain_name, f"{chain_name}_validators.csv")

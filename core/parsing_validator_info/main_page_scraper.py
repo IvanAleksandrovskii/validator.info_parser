@@ -1,12 +1,12 @@
-import csv
-import json
-import re
-import time
-
 from icecream import ic
-from selenium.webdriver.common.by import By
+import time
+import json
+import csv
+import re
+
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.common.by import By
 
 from core.parsing_validator_info import ValidatorInfoScraper
 
