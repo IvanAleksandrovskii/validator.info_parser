@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 import pandas as pd
 
 from core.parsing_validator_info import ValidatorInfoScraper
-from core import logger
+from core import logger, settings
 
 
 class ValidatorLinkAndImageScraper(ValidatorInfoScraper):
@@ -68,14 +68,15 @@ class ValidatorLinkAndImageScraper(ValidatorInfoScraper):
 
     def save_images_and_create_csv(self):
         ic("Starting to save images and create CSV files...")
+        config = settings.validator_info_scraper_save_path
 
         for chain_name, validators in self.data.items():
-            logger.debug(f"Processing chain: {chain_name}")
-            os.makedirs(chain_name, exist_ok=True)
+            chain_dir = os.path.join(config.media_dir, chain_name)
+            config.ensure_dir(chain_dir)
 
             for item in validators:
                 img_filename = self.get_valid_filename(item['validator_name']) + ".png"
-                img_path = os.path.join(chain_name, img_filename)
+                img_path = config.get_image_path(chain_name, img_filename)
 
                 logger.debug(f"Downloading image for {item['validator_name']}")
                 response = httpx.get(item['img_src'])
@@ -86,7 +87,8 @@ class ValidatorLinkAndImageScraper(ValidatorInfoScraper):
                 logger.debug(f"Saved image: {img_filename}")
 
             df = pd.DataFrame(validators)
-            csv_path = os.path.join(chain_name, f"{chain_name}_validators.csv")
+            csv_path = config.get_file_path(config.link_and_image_dir, chain_name, f"{chain_name}_validators.csv")
+            config.ensure_dir(os.path.dirname(csv_path))
             df.to_csv(csv_path, index=False)
             ic(f"Created CSV file: {csv_path}")
 

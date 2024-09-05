@@ -1,3 +1,5 @@
+import os
+
 from icecream import ic
 import time
 import json
@@ -8,6 +10,7 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 
+from core import settings
 from core.parsing_validator_info import ValidatorInfoScraper
 
 
@@ -36,11 +39,15 @@ class MainPageScraper(ValidatorInfoScraper):
 
         return data
 
-    def create_csv_from_main_page(self, data, filename="validator_info_tables/blockchain_data_validator_info.csv"):
+    def create_csv_from_main_page(self, data, filename="blockchain_data_validator_info.csv"):
+        config = settings.validator_info_scraper_save_path
+        file_path = config.get_file_path(config.main_page_dir, "", filename)
+        config.ensure_dir(os.path.dirname(file_path))
+
         headers = ["Network", "Token", "Market Cap", "Price", "Price Change", "Staked", "APR", "Governance",
                    "Delegators", "Validators"]
 
-        with open(filename, 'w', newline='', encoding='utf-8') as file:
+        with open(file_path, 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(headers)
 

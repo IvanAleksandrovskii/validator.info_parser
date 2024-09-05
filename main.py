@@ -1,5 +1,6 @@
 from icecream import ic
 
+from core import settings
 from core.parsing_validator_info import (
     ValidatorExternalLinksScraper,
     ValidatorLinkAndImageScraper,
@@ -24,36 +25,37 @@ validators_page_scraper = ValidatorDataScraper([
 
 link_and_image_scraper = ValidatorLinkAndImageScraper(validators_page_scraper.urls)
 
-external_link_scraper = ValidatorExternalLinksScraper("lava/lava_validators.csv")  # TODO: Make this work with all files in dir (also mkdir)
+config = settings.validator_info_scraper_save_path
+external_link_scraper = ValidatorExternalLinksScraper()
 
 
 def main():
     # main_page_scraper
-    try:
-        main_page_content = main_page_scraper.scrape_main_page()
-        data = main_page_scraper.extract_data_from_main_page(main_page_content)
-        main_page_scraper.create_csv_from_main_page(data)
-    except Exception as e:
-        ic(f"Error scraping main page: {str(e)}")
+    # try:
+    #     main_page_content = main_page_scraper.scrape_main_page()
+    #     data = main_page_scraper.extract_data_from_main_page(main_page_content)
+    #     main_page_scraper.create_csv_from_main_page(data)
+    # except Exception as e:
+    #     ic(f"Error scraping main page: {str(e)}")
 
     # validators_page_scraper
-    for url in validators_page_scraper.urls:
-        try:
-            df = validators_page_scraper.scrape_validator_data(url)
-            validators_page_scraper.save_to_csv(df, url)
-        except Exception as e:
-            ic(f"Error scraping {url}: {str(e)}")
+    # for url in validators_page_scraper.urls:
+    #     try:
+    #         df = validators_page_scraper.scrape_validator_data(url)
+    #         validators_page_scraper.save_to_csv(df, url)
+    #     except Exception as e:
+    #         ic(f"Error scraping {url}: {str(e)}")
 
     # link_and_image_scraper
-    try:
-        ic("Starting the scraping process...")
-        link_and_image_scraper.scrape_validator_links_and_images()
-        ic("Scraping process completed successfully.")
-    except Exception as e:
-        ic(f"Critical error during scraping: {str(e)}")
-    finally:
-        if hasattr(link_and_image_scraper, 'driver'):
-            link_and_image_scraper.driver.quit()
+    # try:
+    #     ic("Starting the scraping process...")
+    #     link_and_image_scraper.scrape_validator_links_and_images()
+    #     ic("Scraping process completed successfully.")
+    # except Exception as e:
+    #     ic(f"Critical error during scraping: {str(e)}")
+    # finally:
+    #     if hasattr(link_and_image_scraper, 'driver'):
+    #         link_and_image_scraper.driver.quit()
 
     # external_link_scraper
     try:

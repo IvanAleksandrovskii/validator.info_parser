@@ -1,3 +1,5 @@
+import os
+
 from icecream import ic
 import time
 
@@ -8,7 +10,7 @@ from selenium.webdriver.common.by import By
 import pandas as pd
 
 from core.parsing_validator_info import ValidatorInfoScraper
-from core import logger
+from core import logger, settings
 
 
 class ValidatorDataScraper(ValidatorInfoScraper):
@@ -66,12 +68,16 @@ class ValidatorDataScraper(ValidatorInfoScraper):
         return df
 
     def save_to_csv(self, df, url):
-        filename = url.split('/')[-1] + '.csv'
-        filename = 'validator_info_tables/' + ''.join(c for c in filename if c.isalnum() or c in ('_', '.'))
+        config = settings.validator_info_scraper_save_path
+        chain_name = config.get_chain_name(url)
+        filename = f"{chain_name}_validators.csv"
+        file_path = config.get_file_path(config.validator_data_dir, chain_name, filename)
+
+        config.ensure_dir(os.path.dirname(file_path))
 
         logger.debug("Columns in DataFrame:")
         for i, col in enumerate(df.columns):
             logger.debug(f"{i}: {col}")
 
-        df.to_csv(filename, index=False)
-        ic(f"Data saved to file: {filename}")
+        df.to_csv(file_path, index=False)
+        ic(f"Data saved to file: {file_path}")
