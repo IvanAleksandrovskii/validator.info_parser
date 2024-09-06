@@ -11,16 +11,16 @@ from core.parsing_validator_info import (
 main_page_scraper = MainPageScraper(["https://validator.info"])
 validators_page_scraper = ValidatorDataScraper([
     "https://validator.info/lava",
-    # "https://validator.info/dydx",
-    # "https://validator.info/cronos-pos",
-    # "https://validator.info/celestia",
-    # "https://validator.info/terra-classic",
-    # "https://validator.info/dymension",
-    # "https://validator.info/saga",
-    # "https://validator.info/haqq",
-    # "https://validator.info/coreum",
-    # "https://validator.info/nolus",
-    # "https://validator.info/polygon",
+    "https://validator.info/dydx",
+    "https://validator.info/cronos-pos",
+    "https://validator.info/celestia",
+    "https://validator.info/terra-classic",
+    "https://validator.info/dymension",
+    "https://validator.info/saga",
+    "https://validator.info/haqq",
+    "https://validator.info/coreum",
+    "https://validator.info/nolus",
+    "https://validator.info/polygon",
 ])
 
 link_and_image_scraper = ValidatorLinkAndImageScraper(validators_page_scraper.urls)
@@ -37,16 +37,16 @@ def main():
     #     main_page_scraper.create_csv_from_main_page(data)
     # except Exception as e:
     #     ic(f"Error scraping main page: {str(e)}")
-
-    # validators_page_scraper
+    #
+    # # validators_page_scraper
     # for url in validators_page_scraper.urls:
     #     try:
     #         df = validators_page_scraper.scrape_validator_data(url)
     #         validators_page_scraper.save_to_csv(df, url)
     #     except Exception as e:
     #         ic(f"Error scraping {url}: {str(e)}")
-
-    # link_and_image_scraper
+    #
+    # # link_and_image_scraper
     # try:
     #     ic("Starting the scraping process...")
     #     link_and_image_scraper.scrape_validator_links_and_images()

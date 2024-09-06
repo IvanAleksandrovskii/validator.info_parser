@@ -62,7 +62,7 @@ class ValidatorExternalLinksScraper(ValidatorInfoScraper):
 
     def scrape_external_links(self):
         ic("Starting to scrape external links...")
-        csv_files = glob.glob(os.path.join(self.base_dir, "*", "*_validators.csv"))
+        csv_files = glob.glob(os.path.join(self.base_dir, "*_validators.csv"))
 
         for file_path in csv_files:
             self.process_csv_file(file_path)

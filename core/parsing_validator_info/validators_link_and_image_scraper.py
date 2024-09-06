@@ -87,7 +87,7 @@ class ValidatorLinkAndImageScraper(ValidatorInfoScraper):
                 logger.debug(f"Saved image: {img_filename}")
 
             df = pd.DataFrame(validators)
-            csv_path = config.get_file_path(config.link_and_image_dir, chain_name, f"{chain_name}_validators.csv")
+            csv_path = config.get_file_path(config.link_and_image_dir, f"{chain_name}_validators.csv")
             config.ensure_dir(os.path.dirname(csv_path))
             df.to_csv(csv_path, index=False)
             ic(f"Created CSV file: {csv_path}")

@@ -71,7 +71,7 @@ class ValidatorDataScraper(ValidatorInfoScraper):
         config = settings.validator_info_scraper_save_path
         chain_name = config.get_chain_name(url)
         filename = f"{chain_name}_validators.csv"
-        file_path = config.get_file_path(config.validator_data_dir, chain_name, filename)
+        file_path = config.get_file_path(config.validator_data_dir, filename)
 
         config.ensure_dir(os.path.dirname(file_path))
 
